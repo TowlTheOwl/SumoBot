@@ -32,7 +32,7 @@ from PIL import ImageGrab, Image
 
 # CAPTURE THE SCREEN (TAKE A SCREENSHOT)
 def screen_capture():
-    img = ImageGrab.grab(bbox=(0, 0, 1920, 1080))
+    img = ImageGrab.grab(bbox=(0, 0, 1920, 1080), include_layered_windows=True)
     print("Captured!")
     img.save(r'img.jpg')
 
