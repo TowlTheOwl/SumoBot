@@ -167,7 +167,7 @@ def state_detection(queue1):
                 print('LOST')
                 with open('state.txt', 'w') as text:
                     text.write('0')
-                time.sleep(0.5)
+                time.sleep(0.05)
                 for i in ['w', 'a', 's', 'd', 'shift', 'ctrl', 'spacebar']:
                     keyboard.release(i)
 
@@ -182,7 +182,7 @@ def state_detection(queue1):
                 print('WON')
                 with open('state.txt', 'w') as text:
                     text.write('0')
-                time.sleep(0.5)
+                time.sleep(0.05)
                 for i in ['w', 'a', 's', 'd', 'shift', 'ctrl', 'spacebar']:
                     keyboard.release(i)
         if keyboard.is_pressed("p"):
