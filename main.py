@@ -32,7 +32,7 @@ from multiprocessing import Process, Queue
 
 # CAPTURE THE SCREEN (TAKE A SCREENSHOT)
 def screen_grab(queue1):
-    while force_stop() != 2:
+    while True:
         with mss.mss() as sct:
             mon = sct.monitors[1]
             queue1.put(sct.grab(mon))
@@ -41,89 +41,91 @@ def screen_grab(queue1):
 
 # USE MACHINE LEARNING TO CLASSIFY THE ACTION
 def classify(queue1, queue2):
-    while force_stop() != 2:
-        if force_stop() == 1:
-            image = queue1.get()
-            if image is not None:
-                img_array = np.array(image)
-                # DOES SOME CALCULATION
+    while True:
+        while force_stop() != 2:
+            if force_stop() == 1:
+                image = queue1.get()
+                if image is not None:
+                    img_array = np.array(image)
+                    # DOES SOME CALCULATION
 
-                # OUTPUTS 14-DIGIT OUTPUT
-                for i in range(8):
-                    value = randint(0, 1)
-                    if i == 0:
-                        output = str(value)
-                    else:
+                    # OUTPUTS 14-DIGIT OUTPUT
+                    for i in range(8):
+                        value = randint(0, 1)
+                        if i == 0:
+                            output = str(value)
+                        else:
+                            output = output + str(value)
+                    for i in range(6):
+                        value = randint(0, 9)
                         output = output + str(value)
-                for i in range(6):
-                    value = randint(0, 9)
-                    output = output + str(value)
-                queue2.put(output)
-            else:
-                pass
+                    queue2.put(output)
+                else:
+                    pass
 
 
 # USE THE OUTPUT TO MAKE ACTION
 def execute_action(queue2, acc='ctrl+g'):
-    while force_stop() != 2:
-        if force_stop() == 1:
-            action = queue2.get()
-            if action is not None:
-                st = time.time()
-                # setup the local vars.
-                print(f'current action: {action}')
+    while True:
+        while force_stop() != 2:
+            if force_stop() == 1:
+                action = queue2.get()
+                if action is not None:
+                    st = time.time()
+                    # setup the local vars.
+                    print(f'current action: {action}')
 
-                duration = 0.05  # actions taken every 'duration' in sec.
-                # to be set to 0 because the same action is to be taken until the next line updates.
-                t = time.time()
-                keylist = []
-                autoclicker = False
-                autoclickerstatus = False  # saves past status of autoclicker
-                mouse = tuple()
-                # ----
-                line = list(map(int, action))
-                if len(line) < 13:
-                    raise AssertionError
-                if line[0] == 1:
-                    keylist.append('w')
-                if line[1] == 1:
-                    keylist.append('a')
-                if line[2] == 1:
-                    keylist.append('s')
-                if line[3] == 1:
-                    keylist.append('d')
-                if line[4] == 1:
-                    keylist.append('shift')
-                if line[5] == 1:
-                    keylist.append('ctrl')
-                if line[6] == 1:
-                    keylist.append('spacebar')
+                    duration = 0.05  # actions taken every 'duration' in sec.
+                    # to be set to 0 because the same action is to be taken until the next line updates.
+                    t = time.time()
+                    keylist = []
+                    autoclicker = False
+                    autoclickerstatus = False  # saves past status of autoclicker
+                    mouse = tuple()
+                    # ----
+                    line = list(map(int, action))
+                    if len(line) < 13:
+                        raise AssertionError
+                    if line[0] == 1:
+                        keylist.append('w')
+                    if line[1] == 1:
+                        keylist.append('a')
+                    if line[2] == 1:
+                        keylist.append('s')
+                    if line[3] == 1:
+                        keylist.append('d')
+                    if line[4] == 1:
+                        keylist.append('shift')
+                    if line[5] == 1:
+                        keylist.append('ctrl')
+                    if line[6] == 1:
+                        keylist.append('spacebar')
 
-                autoclicker = bool(line[7])
-                mouse = (line[8] * 100 + line[9] * 10 + line[10], line[11] * 100 + line[12] * 10 + line[13])
-                for key in list(set(['w', 'a', 's', 'd', 'shift', 'ctrl', 'spacebar']) - set(keylist)):
-                    # clear any pressed keys
-                    keyboard.release(key)
-                    print(key + " was released")
-                for key in (keylist):
-                    # press the key according to the string.
-                    keyboard.press(key)
-                    print(key + ' was pressed')
-                for _ in range(500000000):
-                    if time.time() - t >= duration:
-                        break
+                    autoclicker = bool(line[7])
+                    mouse = (line[8] * 100 + line[9] * 10 + line[10], line[11] * 100 + line[12] * 10 + line[13])
+                    for key in list(set(['w', 'a', 's', 'd', 'shift', 'ctrl', 'spacebar']) - set(keylist)):
+                        # clear any pressed keys
+                        keyboard.release(key)
+                        print(key + " was released")
+                    for key in (keylist):
+                        # press the key according to the string.
+                        keyboard.press(key)
+                        print(key + ' was pressed')
+                    for _ in range(500000000):
+                        if time.time() - t >= duration:
+                            break
 
-                t += duration  # update t
-                # ----
-                if autoclicker != autoclickerstatus:
-                    # when the program needs to toggle
-                    keyboard.send(acc)
-                win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, int(((mouse[0] - 500) / 30) / 1920 * 65535.0),
-                                     int(((mouse[1] - 500) / 30) / 1080 * 65535.0))  # replace 1920,1080 with screen res.
-                print(f'mouse moved by {mouse}')
-                # -------
-                autoclickerstatus = autoclicker  # save the last autoclicker value
-                print(time.time() - st)
+                    t += duration  # update t
+                    # ----
+                    if autoclicker != autoclickerstatus:
+                        # when the program needs to toggle
+                        keyboard.send(acc)
+                    win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, int(((mouse[0] - 500) / 30) / 1920 * 65535.0),
+                                         int(((mouse[1] - 500) / 30) / 1080 * 65535.0))  # replace 1920,1080 with screen res.
+                    print(f'mouse moved by {mouse}')
+                    # -------
+                    autoclickerstatus = autoclicker  # save the last autoclicker value
+                    print(time.time() - st)
 
 
 # STOP AFTER VICTORY/LOSS
@@ -164,7 +166,7 @@ def state_detection(queue1):
             if len(correctList) >= 7:
                 print('LOST')
                 with open('state.txt', 'w') as text:
-                    text.write('2')
+                    text.write('0')
 
             # WHEN WON
             pixels = [pixelMap[430, 340][:-1], pixelMap[430, 380][:-1], pixelMap[430, 900][:-1],
@@ -176,10 +178,10 @@ def state_detection(queue1):
             if len(correctList) >= 7:
                 print('WON')
                 with open('state.txt', 'w') as text:
-                    text.write('2')
+                    text.write('0')
         if keyboard.is_pressed("p"):
             with open('state.txt', 'w') as text:
-                text.write('2')
+                text.write('0')
             exit()
 
 
