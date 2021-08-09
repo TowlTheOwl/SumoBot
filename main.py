@@ -36,6 +36,7 @@ def screen_grab(queue1):
         with mss.mss() as sct:
             mon = sct.monitors[1]
             queue1.put(sct.grab(mon))
+        time.sleep(0.01)
 
 
 # USE MACHINE LEARNING TO CLASSIFY THE ACTION
@@ -143,6 +144,7 @@ def state_detection(queue1):
         image = queue1.get()
         if image is not None:
             pixelMap = np.array(image)
+
             # WHEN "GO" APPEARS
             pixels = [pixelMap[430, 870][:-1],pixelMap[430, 890][:-1],pixelMap[430, 920][:-1],pixelMap[430, 920][:-1],pixelMap[430, 980][:-1],pixelMap[430, 1000][:-1],pixelMap[430, 1040][:-1],pixelMap[430, 1065][:-1]]
             tv_GO = [(255,255,255),(63,63,63),(255,255,255),(62,63,65),(255,255,255),(63,63,63),(255,255,255),(63,63,63)]#:true value:
@@ -151,9 +153,34 @@ def state_detection(queue1):
                 print('GO')
                 with open('state.txt', 'w') as text:
                     text.write('1')
+
+            # WHEN LOST
+            pixels = [pixelMap[430, 340][:-1], pixelMap[430, 380][:-1], pixelMap[430, 900][:-1],
+                      pixelMap[430, 940][:-1], pixelMap[430, 1010][:-1], pixelMap[430, 1050][:-1],
+                      pixelMap[430, 1570][:-1], pixelMap[430, 1610][:-1]]
+            tv_GO = [(85, 85, 255), (21, 21, 63), (85, 85, 255), (21, 21, 63), (85, 85, 255), (21, 21, 63),
+                     (85, 85, 255), (21, 21, 63)]
+            correctList = compareTuples(pixels, tv_GO, 5)
+            if len(correctList) >= 7:
+                print('LOST')
+                with open('state.txt', 'w') as text:
+                    text.write('2')
+
+            # WHEN WON
+            pixels = [pixelMap[430, 340][:-1], pixelMap[430, 380][:-1], pixelMap[430, 900][:-1],
+                      pixelMap[430, 940][:-1], pixelMap[430, 1010][:-1], pixelMap[430, 1050][:-1],
+                      pixelMap[430, 1570][:-1], pixelMap[430, 1610][:-1]]
+            tv_GO = [(85, 255, 85), (21, 63, 21), (85, 255, 85), (21, 63, 21), (85, 255, 85), (21, 63, 21),
+                     (85, 255, 85), (21, 63, 21)]
+            correctList = compareTuples(pixels, tv_GO, 5)
+            if len(correctList) >= 7:
+                print('WON')
+                with open('state.txt', 'w') as text:
+                    text.write('2')
         if keyboard.is_pressed("p"):
             with open('state.txt', 'w') as text:
-                text.write('0')
+                text.write('2')
+            exit()
 
 
 
