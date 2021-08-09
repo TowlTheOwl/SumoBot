@@ -167,6 +167,9 @@ def state_detection(queue1):
                 print('LOST')
                 with open('state.txt', 'w') as text:
                     text.write('0')
+                time.sleep(0.5)
+                for i in ['w', 'a', 's', 'd', 'shift', 'ctrl', 'spacebar']:
+                    keyboard.release(i)
 
             # WHEN WON
             pixels = [pixelMap[430, 340][:-1], pixelMap[430, 380][:-1], pixelMap[430, 900][:-1],
@@ -179,9 +182,15 @@ def state_detection(queue1):
                 print('WON')
                 with open('state.txt', 'w') as text:
                     text.write('0')
+                time.sleep(0.5)
+                for i in ['w', 'a', 's', 'd', 'shift', 'ctrl', 'spacebar']:
+                    keyboard.release(i)
         if keyboard.is_pressed("p"):
             with open('state.txt', 'w') as text:
                 text.write('0')
+            time.sleep(0.5)
+            for i in ['w', 'a', 's', 'd', 'shift', 'ctrl', 'spacebar']:
+                keyboard.release(i)
             exit()
 
 
