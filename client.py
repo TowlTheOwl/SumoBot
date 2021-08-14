@@ -1,34 +1,34 @@
+import socket
 from network import Network
 from random import randint
-import pygame
 
-clientNumber = 0
-
-def make_tup(str):
-
-    costList = str.strip('[]').split(", ")
-    for i in costList:
-        costList[costList.index(i)] = int(i)
-    return costList
 
 
 def main():
 
-    clock = pygame.time.Clock()
     run = True
-    try:
-        n = Network()
-    except Exception as e:
-        print(e)
-        quit()
-    costList = [10, 10, 10, 20, 20, 20]
+    print('connected')
+    n = Network()
+    print('network executed')
+    player = int(n.getP())
+    print(f'Player {player}')
 
     while run:
-        clock.tick(60)
-        data = n.send(str(costList))
-        costList = make_tup(data)
-        print(costList)
-        costList = [randint(10, 100), randint(10, 100), randint(10, 100), randint(10, 100), randint(10, 100), randint(10, 100)]
+        data = []
+        try:
+            data = n.send("get")
 
+        except:
+            run = False
+            print("Couldn't get game")
+            break
+
+        data = data.strip("[]").replace("'", "").split(', ')
+        for i in range(len(data)):
+            data[i] = randint(10, 99)
+        try:
+            n.send(str(data))
+        except:
+            print("Couldn't send data")
 
 main()
