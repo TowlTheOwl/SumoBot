@@ -16,6 +16,10 @@ def compareTuples(list_a, list_b, threshold):
             passed.append(i)
     return passed
 
+def save_actions(action, actionNum):
+    with open('action.txt', 'a') as actionFile:
+        actionFile.write(str(actionNum) + ' ' + (action) + '\n')
+
 
 import numpy as np
 import time
@@ -66,6 +70,7 @@ def classify(queue1, queue2):
 
 # USE THE OUTPUT TO MAKE ACTION
 def execute_action(queue2, acc='ctrl+g'):
+    actionNum = 1
     while True:
         while force_stop() != 2:
             if force_stop() == 1:
@@ -122,11 +127,10 @@ def execute_action(queue2, acc='ctrl+g'):
                         keyboard.send(acc)
                     win32api.mouse_event(win32con.MOUSEEVENTF_MOVE, int(((mouse[0] - 500) / 30) / 1920 * 65535.0),
                                          int(((mouse[1] - 500) / 30) / 1080 * 65535.0))  # replace 1920,1080 with screen res.
-                    print(f'mouse moved by {mouse}')
                     # -------
                     autoclickerstatus = autoclicker  # save the last autoclicker value
-                    print(time.time() - st)
-
+                    Process(target=save_actions, args=(action, actionNum)).start()
+                    actionNum += 1
 
 # STOP AFTER VICTORY/LOSS
 def force_stop():
@@ -188,7 +192,7 @@ def state_detection(queue1):
         if keyboard.is_pressed("p"):
             with open('state.txt', 'w') as text:
                 text.write('0')
-            time.sleep(0.5)
+            time.sleep(0.05)
             for i in ['w', 'a', 's', 'd', 'shift', 'ctrl', 'spacebar']:
                 keyboard.release(i)
             exit()
@@ -206,11 +210,7 @@ if __name__ == '__main__':
     print('started')
     open('action.txt', 'w').close()
     print('action file deleted')
-    try:
-        remove('img.jpg')
-    except FileNotFoundError:
-        pass
-        print('file not found')
+
 
     # gives image
     queue1 = Queue()
