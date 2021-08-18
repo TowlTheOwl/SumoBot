@@ -11,3 +11,5 @@ The threads were made with threading, and with the basics from [TechWithTim](htt
 
 
 ---- MADE BY: ShroomOfDoomGoVroom, 3la5t1c81rdy
+
+See how the bot was made by: [ShroomOfDoomGoVroom](https://docs.google.com/document/d/1EPNP4n031A3HU_COH-wXEKUp1SHZnDfyKw0dHLaT9jE/edit?usp=sharing), 3la5t1c81rdy
