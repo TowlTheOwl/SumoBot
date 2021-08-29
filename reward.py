@@ -12,8 +12,8 @@ def reward(action_list, reward_list, dist_center, dist_op, facingHeat, enemyFaci
     if len(action_list)<len(reward_list)+1:
         #when all actions been evaluated
         assert len(action_list)==len(reward_list),"reward function ran in an immature state."
-        return #skip the function for now
-    
+        return None #skip the function for now
+    rtime=action_list[-1*(len(action_list)-len(reward_list))][0]
     reward=0
     ###ALL OF THESE ARE HYPERPARAMETERS
     if dist_center<=2:
@@ -32,9 +32,9 @@ def reward(action_list, reward_list, dist_center, dist_op, facingHeat, enemyFaci
         reward+=0.5
     else:
         reward-=1
-    if airtime>=0.5: #when you were hit and the airtime increases- definite sign that you are vulnerable
+    if airtime>=0.5: #when you were hit and the airtime increases- sign that you are vulnerable
         reward-=4*int(airtime*2)#efficient version of airtime/0.5
-    reward_list.append((action_list[-1*(len(action_list)-len(reward_list))][0],reward))
+    reward_list.append((rtime,reward))
     #-----
     if len(WorL)==1:
         ftime=action_list[-1][0]
