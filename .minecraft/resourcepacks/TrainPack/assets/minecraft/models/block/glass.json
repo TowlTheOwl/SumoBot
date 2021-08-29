@@ -1,0 +1,6 @@
+{
+    "ambientocclusion": false, "parent": "block/cube_all", "shade": false,
+    "textures": {
+	"all": "blocks/glass"
+    }
+}
