@@ -2,6 +2,7 @@
     "ambientocclusion": false,
     "parent": "block/cube",
     "textures": {
+	"all": "blocks/stone",
         "particle": "#all",
         "down": "#all",
         "up": "#all",
