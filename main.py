@@ -154,7 +154,14 @@ def state_detection(queue1):
             pixels = [pixelMap[380, 950][:-1],pixelMap[390, 970][:-1],pixelMap[390, 940][:-1],pixelMap[460, 970][:-1],pixelMap[470, 920][:-1],pixelMap[490, 940][:-1],pixelMap[470, 980][:-1],pixelMap[490, 1000][:-1]]
             tv_GO = [(85, 85, 255),(21, 21, 63),(85, 85, 255),(21, 21, 63),(85, 85, 255),(21, 21, 63),(85, 85, 255),(21, 21, 63)]#:true value:
             correctList=compareTuples(pixels, tv_GO, 5)
-            if len(correctList)>=7:
+            # WHEN "GO" APPEARS
+            pixels = [pixelMap[430, 870][:-1], pixelMap[430, 890][:-1], pixelMap[430, 920][:-1],
+                      pixelMap[430, 920][:-1], pixelMap[430, 980][:-1], pixelMap[430, 1000][:-1],
+                      pixelMap[430, 1040][:-1], pixelMap[430, 1065][:-1]]
+            tv_GO = [(255, 255, 255), (63, 63, 63), (255, 255, 255), (62, 63, 65), (255, 255, 255), (63, 63, 63),
+                     (255, 255, 255), (63, 63, 63)]  #:true value:
+            correctList2 = compareTuples(pixels, tv_GO, 5)
+            if len(correctList)>=7 or len(correctList2)>=7:
                 print('GO')
                 with open('state.txt', 'w') as text:
                     text.write('1')
@@ -166,7 +173,14 @@ def state_detection(queue1):
             tv_GO = [(85, 85, 255), (21, 21, 63), (85, 85, 255), (21, 21, 63), (85, 85, 255), (21, 21, 63),
                      (85, 85, 255), (21, 21, 63)]
             correctList = compareTuples(pixels, tv_GO, 5)
-            if len(correctList) >= 7:
+
+            pixels = [pixelMap[430, 340][:-1], pixelMap[430, 380][:-1], pixelMap[430, 900][:-1],
+                      pixelMap[430, 940][:-1], pixelMap[430, 1010][:-1], pixelMap[430, 1050][:-1],
+                      pixelMap[430, 1570][:-1], pixelMap[430, 1610][:-1]]
+            tv_GO = [(85, 85, 255), (21, 21, 63), (85, 85, 255), (21, 21, 63), (85, 85, 255), (21, 21, 63),
+                     (85, 85, 255), (21, 21, 63)]
+            correctList2 = compareTuples(pixels, tv_GO, 5)
+            if len(correctList)>=7 or len(correctList2)>=7:
                 print('LOST')
                 with open('state.txt', 'w') as text:
                     text.write('2')
@@ -181,7 +195,15 @@ def state_detection(queue1):
             tv_GO = [(85, 255, 85), (21, 63, 21), (85, 255, 85), (21, 63, 21), (85, 255, 85), (21, 63, 21),
                      (85, 255, 85), (21, 63, 21)]
             correctList = compareTuples(pixels, tv_GO, 5)
-            if len(correctList) >= 7:
+
+            pixels = [pixelMap[430, 630][:-1], pixelMap[430, 910][:-1], pixelMap[430, 1170][:-1],
+                      pixelMap[430, 1250][:-1], pixelMap[430, 1330][:-1], pixelMap[430, 670][:-1],
+                      pixelMap[430, 795][:-1], pixelMap[430, 1350][:-1]]
+            tv_GO = [(0, 170, 255), (0, 170, 255), (0, 170, 255), (0, 170, 255), (0, 170, 255), (0, 42, 42),
+                     (0, 42, 42), (0, 42, 42)]
+            correctList2 = compareTuples(pixels, tv_GO, 5)
+
+            if len(correctList)>=7 or len(correctList2)>=7:
                 print('WON')
                 with open('state.txt', 'w') as text:
                     text.write('3')
