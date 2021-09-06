@@ -39,6 +39,27 @@ The reward function mentioned makes use of the data from the minecraft such as d
 
 The first challenge we faced was the speed at which the program captured the screen. When we made our first prototype of the capturing function, the FPS (frames per second) of the captured screen averaged 3. However, we were able to fix this problem by using the function “Image.save()” from Pillow instead of the “cv2.imwrite” function from OpenCV. We were able to increase FPS from 3 to 13. As we built the program on and on and implemented “mss,” we increased FPS from 13 to average of 28, with recorded lowest of 20 fps and highest of 34. 
 
+Pseudo Code Version 1:
+  
+  Define Screen Capturing function
+    Loop until stopped
+      Grab screen with Pillow Imagegrab
+      Save the image with cv2.imwrite()
+
+Psuedo Code Version 2:
+
+  Define Screen Capturing functions
+    Loop until stopped
+      Grab screen with Pillow Imagegrab
+      Save the image with Image.save()
+
+Psuedo Code Final Version:
+
+  Define Screen Capturing function
+    Loop until stopped
+      Grab screen with mss
+      Put the array into multiprocessing queue
+
 The second challenge came from lack of knowledge in Multiprocessing, which is a built-in module that lets multiple functions be run at the same time. The original idea of using multiprocessing came from web surfing for fun. When we saw what multiprocessing did, we could immediately think of a way to implement this module into our program to increase performance. However, because we knew nothing about Multiprocessing, we had problems using it effectively in our program. We could solve this challenge by searching about Multiprocessing on the internet. We were able to get the basics of multiprocessing from this, and speed of the program. However, this led to a different challenge. 
 
 The third challenge was transferring the data from one function to a different function. Learning about how to start each function with multiprocessing was easy, but learning about “pipe” and “queue”’ functions were difficult. When we looked at the document for multiprocessing, it explained “pipe” and “queue”, but it was too hard to understand, since we didn’t have much understanding in multiprocessing. Unable to understand, instead of using any of the functions, we saved the image in the function that captured the screen, and loaded that image in the function that classified the image. With the output, we saved it to a text file, which was read in the function that executed the action. We also tried to save the image and action value into a variable, but it did not go as we expected since the variables did not change in a function even with the global function. However as we learned about “mss,” we also learned about “queue.” In the documentation about mss, there was also an explanation about how you could use mss with multiprocessing. Thanks to this documentation, we could successfully implement the “queue” function and mss into our program. 
