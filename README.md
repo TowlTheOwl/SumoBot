@@ -51,7 +51,7 @@ The first challenge we faced was the speed at which the program captured the scr
       
       
 
-  Psuedo Code Version 2:
+  Pseudo Code Version 2:
 
     Define Screen Capturing functions
     
@@ -63,7 +63,7 @@ The first challenge we faced was the speed at which the program captured the scr
 
       
       
-  Psuedo Code Final Version:
+  Pseudo Code Final Version:
 
     Define Screen Capturing function
 
@@ -76,9 +76,9 @@ The first challenge we faced was the speed at which the program captured the scr
 
 The second challenge came from the speed of execution. Because a function could only be started after the previous function was finished, the speed of execution was very slow, which would lead to slower decision making or even making decisions that do not fit into the situation the bot could be in. We were able to solve this problem by using Multiprocessing, a built-in module that allows multiple functions to be executed at the same time. Since all functions could be executed at the same time, the program could capture screen, make decisions, execute the action at the same time. This would be beneficial to the program since the program will be making a quicker decision allowing the action to fit better into the situation that the AI is in during the fight. 
 
-  Psuedo Code Before:
+  Pseudo Code Before:
   
-    Define Screen Capturing Function: No parameters
+    Define Screen Capturing Function: Parameter - None
     
       Capture Screen
       
@@ -104,7 +104,7 @@ The second challenge came from the speed of execution. Because a function could 
       
       Use the output to start Player Controlling Function
 
-  Psuedo Code After:
+  Pseudo Code After:
   
     Define Screen Capturing Function: Parameter - Queue 1
     
@@ -134,7 +134,76 @@ The second challenge came from the speed of execution. Because a function could 
   
 The third challenge was transferring the data from one function to a different function. Learning about how to start each function with multiprocessing was easy, but learning about “pipe” and “queue”’ functions were difficult. When we looked at the document for multiprocessing, it explained “pipe” and “queue”, but it was too hard to understand, since we didn’t have much understanding in multiprocessing. Unable to understand, instead of using any of the functions, we saved the image in the function that captured the screen, and loaded that image in the function that classified the image. With the output, we saved it to a text file, which was read in the function that executed the action. We also tried to save the image and action value into a variable, but it did not go as we expected since the variables did not change in a function even with the global function. However as we learned about “mss,” we also learned about “queue.” In the documentation about mss, there was also an explanation about how you could use mss with multiprocessing. Thanks to this documentation, we could successfully implement the “queue” function and mss into our program. 
 
+  Pseudo Code before:
+  
+    Initialize variables "image" and "action"
+  
+    Define Screen Capturing Function: Parameter - None
+    
+      Use global variable "image"
+    
+      Loop
+
+        Capture Screen
+
+        Update variable image as the array of RGB values of each pixel on the screen
+    
+    Define Decision Making Function: Parameter - None
+    
+      Use global variables "image" and "action"
+    
+      Loop
+
+        Use the value of image to decide on an action
+
+        Update variable action as 13-digit number output
+    
+    Define Player Controlling Function: Parameter - None
+    
+      Use global variable "action"
+    
+      Loop
+
+        Execute action by pressing keys and moving the mouse
+      
+    Start all functions with multiprocessing Process
+    
+    **This did not work because the variables weren't being updated**
+  
+  What the code was changed to can be seen above: "Psuedo Code after" in second challenge
+  
+
 Another problem we ran into was creating a socket to transfer data over from one computer to another since the python code that finds the value for the reward function cannot be run on both computers. . The reason why we needed a socket to transfer data is to make a reward when doing Agent vs Agent training. Some of the data we transfer are the distance from the center, and where the bots are facing and how far away that is from the opponent. Socket, being one of the modules we first learned not long ago, gave us problems because of our lack of knowledge in socket. We learned about sockets by watching videos about making online video games. We used similar code that we learned in the video in our programs too. We got errors such as “winerror 10053.” Even when we searched on the internet, we couldn’t find how to fix the code. We fixed this code by rewriting it, since we couldn’t figure out what the problem was. After rewriting the code and comparing it with the original one, we were able to find out that the problem occurred because of the decoding of the data. Since we coded it similarly with the code used in the video, and the code in the video used “pickle” that lets a code send a class instance over socket, we also had to change the decoding of the data, since we sent a single number rather than the whole class instance. 
+
+  Pseudo Code before:
+  
+    Connect to server established with another code
+    
+    Server sends data
+    
+    Receive, decode the data
+    
+    Send "get" to receive another data (calculated reward value)
+    
+    Save the data as variable
+    
+    **ERROR**
+    
+  
+  Pseudo Code after:
+  
+    Connect to server established with another code
+    
+    Server sends data
+    
+    Receive, decode the data
+    
+    Send "get" to receive another data (calculated reward value)
+    
+    Decode the received data
+    
+    Save the data as variable
+  
 
 The final challenge was being able to control player movements from the supposed Neural Network’s output. We were able to acknowledge that the Minecraft player could be controlled using the simulated output. Therefore, we sought for and found libraries that do such, being keyboard and mouse. They could be used such that the output of the NN, which is then determined to be 13 digits, 7 binary digits and 2 3-digit integers, that simulates 7 keys that control the player movements and where the player was facing using those libraries.
 
