@@ -28,7 +28,7 @@ Our names are Juncheol and Hyeoncheol, and we are creators of the Minecraft Sumo
 
 **System Architecture**
 
-The agent is composed of seven functions. The first function captures the image, second function detects the state of the game, third distributes the state to all other functions, fourth classifies the image and decides on the action, fifth executes the action, sixth records all the actions. The process starts with Multiprocessing starting all the functions, except sixth, to make the functions run at the same time. When the functions start, the first function starts to capture the screen and sends the array of the image to two other functions: the second and fourth functions. However, the fourth function, the function that classifies the image, does not start until the third function tells the function that the game has started. Then, the function classifies the image and gives a 7 digit binary number, followed by a 6 digit decimal number. The first 7 digit decides whether to press or not press keys such as w, a, s, and d. The next 6 digits decide by how much to move the mouse, which controls the aim, to hit the enemy. Then the function sends the 13-digit number to the fifth function, which executes all the actions, by pressing the buttons and moving the mouse. Then it starts the sixth function with the argument as the 13-digit number. The sixth function records the action. 
+The agent is composed of seven functions. The first function captures the image, second function detects the state of the game, third distributes the state to all other functions, fourth classifies the image and decides on the action, fifth executes the action, sixth records all the actions. The process starts with Multiprocessing starting all the functions, except sixth, to make the functions run at the same time. When the functions start, the first function starts to capture the screen and sends the array of the image to two other functions: the second and fourth functions. However, the fourth function, the function that classifies the image, does not start until the third function tells the function that the game has started. Then, the function classifies the image and gives a 7 digit binary number, followed by a 6 digit decimal number. The first 7 digit decides whether to press or not press keys such as w, a, s, and d. The next 6 digits decide by how much to move the mouse, which controls the aim, to hit the enemy. Then the function sends the 14-digit number to the fifth function, which executes all the actions, by pressing the buttons and moving the mouse. Then it starts the sixth function with the argument as the 14-digit number. The sixth function records the action. 
 
 The Minecraft map we created mimics the map of sumo in a popular multiplayer server “Hypixel.” The platform is congruent to the one on Hypixel, except that it is not decorated to avoid the NN accidentally catching on decorations unrelated to the Sumo gamemode. Furthermore, it is possible to run a specific reward function we have designed in our map which cannot be used on Hypixel.
 
@@ -92,7 +92,7 @@ The second challenge came from the speed of execution. Because a function could 
       
       Return: Action
     
-    Define Player Controlling Function: Parameter - 13-digit number (action)
+    Define Player Controlling Function: Parameter - 14-digit number (action)
     
       Execute the action
     
@@ -126,7 +126,7 @@ The second challenge came from the speed of execution. Because a function could 
     
       Loop
 
-        Set action as the value of Queue 2 (13-digit number; action)
+        Set action as the value of Queue 2 (14-digit number; action)
 
         Execute action by pressing keys and moving the mouse
       
@@ -156,7 +156,7 @@ The third challenge was transferring the data from one function to a different f
 
         Use the value of image to decide on an action
 
-        Update variable action as 13-digit number output
+        Update variable action as 14-digit number output
     
     Define Player Controlling Function: Parameter - None
     
@@ -204,8 +204,112 @@ Another problem we ran into was creating a socket to transfer data over from one
     
     Save the data as variable
   
+Some challenges came from the creation of the training environment. As said, one of the reasons why we chose Sumo as the AI's specialization was the fact that this gamemode was simple and easily trainable. However, it was a challenge to come up with a method to make the Python program handling the AI understand the end of the episode, i.e. the Win/Loss was determined, or the game was forcefully ended for other reasons. It would have been possible to implement the Python code that send such information to the agents using mcpipy, but we already planned a code that would send various in-game data (the environment data that is used for the reward, but not visible to the AI) back to the program that should run in a minimal time. Therefore, we decided to make an algorithm that returns the information required for the training using “Command Blocks,” which allows programming within Minecraft. The system of Command Blocks recognizes two players, sets them up in the Sumo arena, announces the start, broadcasts different messages to each player depending on the result at the end of the episode, and repeats the process after delay. Specifics can be understood by referring to the pseudocode below:
 
-The final challenge was being able to control player movements from the supposed Neural Network’s output. We were able to acknowledge that the Minecraft player could be controlled using the simulated output. Therefore, we sought for and found libraries that do such, being keyboard and mouse. They could be used such that the output of the NN, which is then determined to be 13 digits, 7 binary digits and 2 3-digit integers, that simulates 7 keys that control the player movements and where the player was facing using those libraries.
+**Note that "splash" depicted represents showing text splash on the designated player's screen**
+    Pseudocode of the Command block system in _Minecraft_ that controls the _Sumo_ game:
+
+	    When two players are present in Location0-0 and Location0-1:
+        
+        Warp both to Sumo Arena
+        
+        Wait for a few seconds
+        
+        Send splash to both players "GO" with White text
+        
+        Repeat:
+          
+          If Player1 fell out of the arena:
+            
+            Place block on Location1
+            
+            break
+          
+          Else if Player2 fell out of the arena:
+            
+            Place block on Location2
+            
+            break
+          
+          Else if (arbit.) seconds have passed:
+            
+            Place block on Location3
+            
+            break
+          
+          Else:
+          
+            Continue
+        
+        If Location1 has block:
+          
+          Send splash to Player1 "####" with Red text
+          
+          Send splash to Player2 "####" with Green text
+          
+          Clear block
+        
+        If Location2 has block:
+          
+          Send splash to Player1 "####" with Green text
+          
+          Send splash to Player2 "####" with Red text
+          
+          Clear block
+          
+        If Location3 has block:
+          
+          Send splash to both players "####" with Red text
+          
+          Clear block
+        
+        Warp Player1 to Location0-0
+        
+        Warp Player2 to Location0-1
+
+    When the text splash is printed out to the screen, the screen is captured, then a Python function can acknowledge the end of the episode by matching the pixel:
+
+      Receive Image data from Multiprocessing queue
+      
+      Initialize list of tuples pixels using the Image data on specific pixels
+      
+      Initialize list of tuples tv using pre-determined pixel data [1]
+      
+      Initialize integer match as 0
+      
+      for each item in tv and pixels as i and j:
+        
+        if i==j:
+          
+          match = match + 1
+        
+      If match > (arbitrary threshold):
+      
+        set [variable/data that can be seen across different functions] as [Win / Loss] (depending on what the program was checking for in [1])
+      
+*Note that the pseudocode above only depicts a part of the hard-coded classification that handles Agent vs Agent training.
+
+The final challenge was being able to control player movements from the supposed Neural Network’s output. We were able to acknowledge that the Minecraft player could be controlled using the simulated output. Therefore, we sought for and found libraries that do such, being keyboard and mouse. They could be used such that the output of the NN, which is then determined to be 14 digits, 8 binary digits and 2 3-digit integers, that simulates 8 keys that control the player movements and where the player was facing using those libraries.
+
+    Pseudocode:
+      
+      ...
+      
+      Receive variable action from Queue 2
+      
+      Release all keys
+      
+      If action[0] == 1:
+        
+        press w
+        
+      If action[1] == 1:
+      
+        press a
+        
+      [...]
+      
+      Move mouse by (action[8]*100+action[9]*10+action[10]) in x direction and (action[11]*100+action[12]*10+action[13]) in y direction
 
 
 **Related Works and Backgrounds**
@@ -215,4 +319,4 @@ Being people that enjoy playing video games, we were also exposed to a lot of di
 
 **Conclusion and Future Work**
 
-We were able to create the basic framework of a real-time Minecraft AI which now can successfully capture screen and execute action. However, since this AI cannot make its own action, we would need to implement Neural Network into the program so that it can make its action and execute it to fight the opponent, rather than making the random actions as it currently does. Also, we would like to develop the neural network in many different ways, so that we could see which way is the best for a Minecraft AI to develop in, and record the winrates of the bots after developing enough to make accurate decisions, in an online environment. One challenge we expect is speed of classification, or the decision making times. Since the array first function, the function that captures the screen, gives to the fourth function, the function that makes the decision, is 1080 x 1920 x 4, the length of the input is 8,294,400. Because this is too big and will take too long for a neural network to make a decision, we would need to find a way to speed up the process and compress the image in a way that it is readable for the program while not being to large that it will take too long before it can make its decisions. Also, we were able to learn about different modules in Python such as multiprocessing and socket. And as we move forward with the project, we hope we can learn more about Python while coding the new parts of the program. 
+We were able to create the basic framework of a real-time Minecraft AI which now can successfully capture screen and execute action. However, since this AI cannot make its own action, we would need to implement Neural Network into the program so that it can make its action and execute it to fight the opponent, rather than making the random actions as it currently does. Also, we would like to develop the neural network in many different ways, so that we could see which way is the best for a Minecraft AI to develop in, and record the winrates of the bots after developing enough to make accurate decisions, in an online environment. One challenge we expect is speed of classification, or the decision making times. Since the array first function, the function that captures the screen, gives to the fourth function, the function that makes the decision, is 1080 x 1920 x 4, the size of the input exceeds 8 million integer values. Because this is too big and will take too long for a neural network to make a decision, we would need to find a way to speed up the process and compress the image in a way that it is readable for the program while not being to large that it will take too long before it can make its decisions. Also, we were able to learn about different modules in Python such as multiprocessing and socket. And as we move forward with the project, we hope we can learn more about Python while coding the new parts of the program. 
