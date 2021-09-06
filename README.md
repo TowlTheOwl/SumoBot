@@ -207,91 +207,92 @@ Another problem we ran into was creating a socket to transfer data over from one
 Some challenges came from the creation of the training environment. As said, one of the reasons why we chose Sumo as the AI's specialization was the fact that this gamemode was simple and easily trainable. However, it was a challenge to come up with a method to make the Python program handling the AI understand the end of the episode, i.e. the Win/Loss was determined, or the game was forcefully ended for other reasons. It would have been possible to implement the Python code that send such information to the agents using mcpipy, but we already planned a code that would send various in-game data (the environment data that is used for the reward, but not visible to the AI) back to the program that should run in a minimal time. Therefore, we decided to make an algorithm that returns the information required for the training using “Command Blocks,” which allows programming within Minecraft. The system of Command Blocks recognizes two players, sets them up in the Sumo arena, announces the start, broadcasts different messages to each player depending on the result at the end of the episode, and repeats the process after delay. Specifics can be understood by referring to the pseudocode below:
 
 **Note that "splash" depicted represents showing text splash on the designated player's screen**
-    Pseudocode of the Command block system in _Minecraft_ that controls the _Sumo_ game:
 
-	    When two players are present in Location0-0 and Location0-1:
-        
-        Warp both to Sumo Arena
-        
-        Wait for a few seconds
-        
-        Send splash to both players "GO" with White text
-        
-        Repeat:
-          
-          If Player1 fell out of the arena:
-            
-            Place block on Location1
-            
-            break
-          
-          Else if Player2 fell out of the arena:
-            
-            Place block on Location2
-            
-            break
-          
-          Else if (arbit.) seconds have passed:
-            
-            Place block on Location3
-            
-            break
-          
-          Else:
-          
-            Continue
-        
-        If Location1 has block:
-          
-          Send splash to Player1 "####" with Red text
-          
-          Send splash to Player2 "####" with Green text
-          
-          Clear block
-        
-        If Location2 has block:
-          
-          Send splash to Player1 "####" with Green text
-          
-          Send splash to Player2 "####" with Red text
-          
-          Clear block
-          
-        If Location3 has block:
-          
-          Send splash to both players "####" with Red text
-          
-          Clear block
-        
-        Warp Player1 to Location0-0
-        
-        Warp Player2 to Location0-1
+  Pseudocode of the Command block system in _Minecraft_ that controls the _Sumo_ game:
 
-    When the text splash is printed out to the screen, the screen is captured, then a Python function can acknowledge the end of the episode by matching the pixel:
-
-      Receive Image data from Multiprocessing queue
-      
-      Initialize list of tuples pixels using the Image data on specific pixels
-      
-      Initialize list of tuples tv using pre-determined pixel data [1]
-      
-      Initialize integer match as 0
-      
-      for each item in tv and pixels as i and j:
+    When two players are present in Location0-0 and Location0-1:
         
-        if i==j:
+      Warp both to Sumo Arena
+        
+      Wait for a few seconds
+        
+      Send splash to both players "GO" with White text
+        
+      Repeat:
           
-          match = match + 1
+        If Player1 fell out of the arena:
+            
+          Place block on Location1
+            
+          break
+          
+        Else if Player2 fell out of the arena:
+            
+          Place block on Location2
+            
+          break
+          
+        Else if (arbit.) seconds have passed:
         
-      If match > (arbitrary threshold):
+          Place block on Location3
+          
+          break
+          
+        Else:
+          
+          Continue
+        
+      If Location1 has block:
+          
+        Send splash to Player1 "####" with Red text
+        
+        Send splash to Player2 "####" with Green text
+          
+        Clear block
+        
+      If Location2 has block:
+          
+        Send splash to Player1 "####" with Green text
+          
+        Send splash to Player2 "####" with Red text
+          
+        Clear block
+          
+      If Location3 has block:
+          
+        Send splash to both players "####" with Red text
+          
+        Clear block
+        
+      Warp Player1 to Location0-0
+        
+      Warp Player2 to Location0-1
+
+  When the text splash is printed out to the screen, the screen is captured, then a Python function can acknowledge the end of the episode by matching the pixel:
+
+    Receive Image data from Multiprocessing queue
       
-        set [variable/data that can be seen across different functions] as [Win / Loss] (depending on what the program was checking for in [1])
+    Initialize list of tuples pixels using the Image data on specific pixels
+      
+    Initialize list of tuples tv using pre-determined pixel data [1]
+      
+    Initialize integer match as 0
+      
+    for each item in tv and pixels as i and j:
+        
+      if i==j:
+          
+        match = match + 1
+        
+    If match > (arbitrary threshold):
+      
+      set [variable/data that can be seen across different functions] as [Win / Loss] (depending on what the program was checking for in [1])
       
 *Note that the pseudocode above only depicts a part of the hard-coded classification that handles Agent vs Agent training.
 
 The final challenge was being able to control player movements from the supposed Neural Network’s output. We were able to acknowledge that the Minecraft player could be controlled using the simulated output. Therefore, we sought for and found libraries that do such, being keyboard and mouse. They could be used such that the output of the NN, which is then determined to be 14 digits, 8 binary digits and 2 3-digit integers, that simulates 8 keys that control the player movements and where the player was facing using those libraries.
 
-    Pseudocode:
+  Pseudocode:
       
       ...
       
@@ -310,6 +311,8 @@ The final challenge was being able to control player movements from the supposed
       [...]
       
       Move mouse by (action[8]*100+action[9]*10+action[10]) in x direction and (action[11]*100+action[12]*10+action[13]) in y direction
+      
+      ...
 
 
 **Related Works and Backgrounds**
