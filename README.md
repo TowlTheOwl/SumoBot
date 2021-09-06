@@ -42,23 +42,37 @@ The first challenge we faced was the speed at which the program captured the scr
 Pseudo Code Version 1:
   
   Define Screen Capturing function
+  
     Loop until stopped
+    
       Grab screen with Pillow Imagegrab
+      
       Save the image with cv2.imwrite()
+      
+      
 
 Psuedo Code Version 2:
 
   Define Screen Capturing functions
+  
     Loop until stopped
+    
       Grab screen with Pillow Imagegrab
+      
       Save the image with Image.save()
-
+      
+      
+      
 Psuedo Code Final Version:
 
   Define Screen Capturing function
+  
     Loop until stopped
+    
       Grab screen with mss
+      
       Put the array into multiprocessing queue
+      
 
 The second challenge came from lack of knowledge in Multiprocessing, which is a built-in module that lets multiple functions be run at the same time. The original idea of using multiprocessing came from web surfing for fun. When we saw what multiprocessing did, we could immediately think of a way to implement this module into our program to increase performance. However, because we knew nothing about Multiprocessing, we had problems using it effectively in our program. We could solve this challenge by searching about Multiprocessing on the internet. We were able to get the basics of multiprocessing from this, and speed of the program. However, this led to a different challenge. 
 
