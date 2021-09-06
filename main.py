@@ -37,12 +37,9 @@ from multiprocessing import Process, Queue
 # CAPTURE THE SCREEN (TAKE A SCREENSHOT)
 def screen_grab(queue1):
     while True:
-        t1 = time.perf_counter()
         with mss.mss() as sct:
             mon = sct.monitors[1]
             queue1.put(np.array(sct.grab(mon)))
-        t2 = time.perf_counter()
-        print(round((t2-t1), 4))
         time.sleep(0.01)
 
 
