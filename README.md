@@ -34,7 +34,9 @@ The Minecraft map we created mimics the map of sumo in a popular multiplayer ser
 
 The reward function mentioned makes use of the data from the minecraft such as distance from the center of the circular arena and the opponent, the closeness towards facing the opponent, and the time the player was not on the ground, all collected using python program running inside mcpipy, the mod allowing Python scripts to run in Minecraft.
 
-Key challenges and their solutions
+
+**Key challenges and their solutions**
+
 The first challenge we faced was the speed at which the program captured the screen. When we made our first prototype of the capturing function, the FPS (frames per second) of the captured screen averaged 3. However, we were able to fix this problem by using the function “Image.save()” from Pillow instead of the “cv2.imwrite” function from OpenCV. We were able to increase FPS from 3 to 13. As we built the program on and on and implemented “mss,” we increased FPS from 13 to average of 28, with recorded lowest of 20 fps and highest of 34. 
 
 The second challenge came from lack of knowledge in Multiprocessing, which is a built-in module that lets multiple functions be run at the same time. The original idea of using multiprocessing came from web surfing for fun. When we saw what multiprocessing did, we could immediately think of a way to implement this module into our program to increase performance. However, because we knew nothing about Multiprocessing, we had problems using it effectively in our program. We could solve this challenge by searching about Multiprocessing on the internet. We were able to get the basics of multiprocessing from this, and speed of the program. However, this led to a different challenge. 
