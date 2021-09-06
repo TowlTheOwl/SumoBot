@@ -39,7 +39,7 @@ The reward function mentioned makes use of the data from the minecraft such as d
 
 The first challenge we faced was the speed at which the program captured the screen. When we made our first prototype of the capturing function, the FPS (frames per second) of the captured screen averaged 3. However, we were able to fix this problem by using the function “Image.save()” from Pillow instead of the “cv2.imwrite” function from OpenCV. We were able to increase FPS from 3 to 13. As we built the program on and on and implemented “mss,” we increased FPS from 13 to average of 28, with recorded lowest of 20 fps and highest of 34. 
 
-Pseudo Code Version 1:
+  Pseudo Code Version 1:
   
     Define Screen Capturing function
 
@@ -51,10 +51,10 @@ Pseudo Code Version 1:
       
       
 
-Psuedo Code Version 2:
+  Psuedo Code Version 2:
 
     Define Screen Capturing functions
-
+    
       Loop until stopped
 
         Grab screen with Pillow Imagegrab
@@ -63,7 +63,7 @@ Psuedo Code Version 2:
 
       
       
-Psuedo Code Final Version:
+  Psuedo Code Final Version:
 
     Define Screen Capturing function
 
@@ -74,8 +74,64 @@ Psuedo Code Final Version:
         Put the array into multiprocessing queue
       
 
-The second challenge came from lack of knowledge in Multiprocessing, which is a built-in module that lets multiple functions be run at the same time. The original idea of using multiprocessing came from web surfing for fun. When we saw what multiprocessing did, we could immediately think of a way to implement this module into our program to increase performance. However, because we knew nothing about Multiprocessing, we had problems using it effectively in our program. We could solve this challenge by searching about Multiprocessing on the internet. We were able to get the basics of multiprocessing from this, and speed of the program. However, this led to a different challenge. 
+The second challenge came from the speed of execution. Because a function could only be started after the previous function was finished, the speed of execution was very slow, which would lead to slower decision making or even making decisions that do not fit into the situation the bot could be in. We were able to solve this problem by using Multiprocessing, a built-in module that allows multiple functions to be executed at the same time. Since all functions could be executed at the same time, the program could capture screen, make decisions, execute the action at the same time. This would be beneficial to the program since the program will be making a quicker decision allowing the action to fit better into the situation that the AI is in during the fight. 
 
+  Psuedo Code Before:
+  
+    Define Screen Capturing Function: No parameters
+    
+      Capture Screen
+      
+      Return: Array of RGB values of each pixels on the screen
+    
+    Define Decision Making Function: Parameter - Array of the screen
+    
+      Calculate using the array
+      
+      Output Decision
+      
+      Return: Action
+    
+    Define Player Controlling Function: Parameter - 13-digit number (action)
+    
+      Execute the action
+    
+    Loop
+    
+      Start Screen Capturing Function
+      
+      Use the output to Start Decision Making Function
+      
+      Use the output to start Player Controlling Function
+
+  Psuedo Code After:
+  
+    Define Screen Capturing Function: Parameter - Queue 1
+    
+      Loop
+
+        Capture Screen
+
+        Put the array of RGB values of each pixels on the screen into the queue
+    
+    Define Decision Making Function: Parameter - Queue 1, Queue 2
+    
+      Loop
+
+        Use the value of Queue 1 to decide on an action
+
+        Put the action into Queue 2
+    
+    Define Player Controlling Function: Parameter - Queue 2
+    
+      Loop
+
+        Set action as the value of Queue 2 (13-digit number; action)
+
+        Execute action by pressing keys and moving the mouse
+      
+    Start all functions with multiprocessing Process
+  
 The third challenge was transferring the data from one function to a different function. Learning about how to start each function with multiprocessing was easy, but learning about “pipe” and “queue”’ functions were difficult. When we looked at the document for multiprocessing, it explained “pipe” and “queue”, but it was too hard to understand, since we didn’t have much understanding in multiprocessing. Unable to understand, instead of using any of the functions, we saved the image in the function that captured the screen, and loaded that image in the function that classified the image. With the output, we saved it to a text file, which was read in the function that executed the action. We also tried to save the image and action value into a variable, but it did not go as we expected since the variables did not change in a function even with the global function. However as we learned about “mss,” we also learned about “queue.” In the documentation about mss, there was also an explanation about how you could use mss with multiprocessing. Thanks to this documentation, we could successfully implement the “queue” function and mss into our program. 
 
 Another problem we ran into was creating a socket to transfer data over from one computer to another since the python code that finds the value for the reward function cannot be run on both computers. . The reason why we needed a socket to transfer data is to make a reward when doing Agent vs Agent training. Some of the data we transfer are the distance from the center, and where the bots are facing and how far away that is from the opponent. Socket, being one of the modules we first learned not long ago, gave us problems because of our lack of knowledge in socket. We learned about sockets by watching videos about making online video games. We used similar code that we learned in the video in our programs too. We got errors such as “winerror 10053.” Even when we searched on the internet, we couldn’t find how to fix the code. We fixed this code by rewriting it, since we couldn’t figure out what the problem was. After rewriting the code and comparing it with the original one, we were able to find out that the problem occurred because of the decoding of the data. Since we coded it similarly with the code used in the video, and the code in the video used “pickle” that lets a code send a class instance over socket, we also had to change the decoding of the data, since we sent a single number rather than the whole class instance. 
