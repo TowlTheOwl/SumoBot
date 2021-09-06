@@ -1,4 +1,4 @@
-# SumoBot
+# Minecraft AI: Sumo Bot
 Minecraft Sumo Bot
 
 This project is aimed at creating sumo bot (hopefully with some sophisticated movements) in Minecraft using python, especially Machine Learning.
@@ -11,22 +11,22 @@ The threads were made with threading, and with the basics of socket from [TechWi
 
 
 
-**Attempt at Real-Time Minecraft AI with Reinforcement Learning**
+# Attempt at Real-Time Minecraft AI with Reinforcement Learning
 
-Juncheol Yang, Hyeoncheol Yang
+By: Juncheol Yang, Hyeoncheol Yang
 
 
-Abstract
+**Abstract**
 
 Being people who enjoy playing video games, we have attempted to create an AI for the video game Minecraft, capable of determining actions by analyzing the features from the screen like a human player. It is specialized to the named minigame Sumo, where two players in the circular arena fight against each other to ‘punch’ the opponent outside, which requires the mastery of the game physics, including the ones that exploit its limitations. There already exist many kinds of “hacks” where modded bots intercept the opponent position received from the server and manipulate it to automate player movements and/or gain significant advantage. These traditional hacks could be coded so that they outperform any human, but they, almost always, modify how Minecraft functions and are easy to spot that they are nonhuman programs. Contrary to this, our goal was to create Artificial Intelligence that controls a player much like how a human would by using display output from Minecraft. To achieve this, the Artificial Intelligence was to capture screen directly from Minecraft, process through Neural Network, simulate player movement back in Minecraft to observe the outcome, and re-adjust the NN either according to the reward function that assesses the optimality or the outcome of the entire episode. Accordingly, we have created the training environment and major framework for the AI during the summer break. Our future plan is to complete the NN, train in the custom Minecraft world and in the popular server against real humans, and seek for the imperfections and improvements.
 
 
-Introduction
+**Introduction**
 
 Our names are Juncheol and Hyeoncheol, and we are creators of the Minecraft Sumobot. We were brainstorming for a challenging project to work over the summer break, and we came up with three top candidates. First was the Minecraft parkour bot. Parkour is arguably one of the most technical gamemode, which at the advanced level requires manipulation of the game physics to the extreme to complete a single, or a series of, block-to-block maneuvers. The second candidate was a bot for PvP, one of the most popular gamemode in Minecraft which includes a complex analysis of the situation to determine the best action in a fast-paced battle against the opponent. The third was the Minecraft sumo bot, a gamemode that has similar skill requirements to Minecraft PvP but the difference being two players fight to knock the other off the platform instead of forcing enemy health to 0. Among these three, we have determined to create Artificial Intelligence for the Sumo gamemode, because for Parkour, there always exists a clear solution to a possible “jump” which we knew for certain that a hard-coded algorithm would always perform better than by Machine Learning, and for PvP, we found more complexity in the gamemode than what we found playing Sumo gamemode. We also figured that it will be easy to train in Sumo gamemode because it is easy to implement repeated iterations to train on while being expected to be simple enough for the Neural Network to be optimized in a relatively short amount of training.
 
 
-System Architecture
+**System Architecture**
 
 The agent is composed of seven functions. The first function captures the image, second function detects the state of the game, third distributes the state to all other functions, fourth classifies the image and decides on the action, fifth executes the action, sixth records all the actions. The process starts with Multiprocessing starting all the functions, except sixth, to make the functions run at the same time. When the functions start, the first function starts to capture the screen and sends the array of the image to two other functions: the second and fourth functions. However, the fourth function, the function that classifies the image, does not start until the third function tells the function that the game has started. Then, the function classifies the image and gives a 7 digit binary number, followed by a 6 digit decimal number. The first 7 digit decides whether to press or not press keys such as w, a, s, and d. The next 6 digits decide by how much to move the mouse, which controls the aim, to hit the enemy. Then the function sends the 13-digit number to the fifth function, which executes all the actions, by pressing the buttons and moving the mouse. Then it starts the sixth function with the argument as the 13-digit number. The sixth function records the action. 
 
@@ -46,11 +46,11 @@ Another problem we ran into was creating a socket to transfer data over from one
 The final challenge was being able to control player movements from the supposed Neural Network’s output. We were able to acknowledge that the Minecraft player could be controlled using the simulated output. Therefore, we sought for and found libraries that do such, being keyboard and mouse. They could be used such that the output of the NN, which is then determined to be 13 digits, 7 binary digits and 2 3-digit integers, that simulates 7 keys that control the player movements and where the player was facing using those libraries.
 
 
-Related Works and Backgrounds
+**Related Works and Backgrounds**
 
 Being people that enjoy playing video games, we were also exposed to a lot of different contents about video games. And one of them was a “bot,” which acts like a player to play a specific game. Almost every single video game we played had some kind of a bot that executed whatever action it was designed to do. For example, for the game Rocket League, there was a bot that played the game to score goals and defend its own goal. For the game Piano Tiles, a bot was designed to press on the keys that needed to be pressed. This was very interesting to us since we enjoy both video games and coding, and a bot is a combination of both. Some of the programs we saw were also called “hacks,” since it gave a player an unfair advantage over other players. While playing video games, we also came across many different hacks, which are mostly relevant in Minecraft, since it is easy to control everything client-side. However, we did not want to create a hack. So rather than creating a part of the game, we created the whole bot to control the keys and mouse of the game to move and make its own actions. 
 
 
-Conclusion and Future Work
+**Conclusion and Future Work**
 
 We were able to create the basic framework of a real-time Minecraft AI which now can successfully capture screen and execute action. However, since this AI cannot make its own action, we would need to implement Neural Network into the program so that it can make its action and execute it to fight the opponent, rather than making the random actions as it currently does. Also, we would like to develop the neural network in many different ways, so that we could see which way is the best for a Minecraft AI to develop in, and record the winrates of the bots after developing enough to make accurate decisions, in an online environment. One challenge we expect is speed of classification, or the decision making times. Since the array first function, the function that captures the screen, gives to the fourth function, the function that makes the decision, is 1080 x 1920 x 4, the length of the input is 8,294,400. Because this is too big and will take too long for a neural network to make a decision, we would need to find a way to speed up the process and compress the image in a way that it is readable for the program while not being to large that it will take too long before it can make its decisions. Also, we were able to learn about different modules in Python such as multiprocessing and socket. And as we move forward with the project, we hope we can learn more about Python while coding the new parts of the program. 
